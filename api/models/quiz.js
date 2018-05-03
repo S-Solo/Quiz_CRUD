@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const QuizSchema = mongoose.Schema ( {
+const QuizSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     title: String,
     content: String,
