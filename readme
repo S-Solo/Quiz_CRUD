@@ -1,7 +1,7 @@
 included modules.
 
-express install.  //framework node
-nodemon install //for automatic restart server
-morgan install // for logging request
+express //framework node
+nodemon //for automatic restart server
+morgan  // for logging request
 body-parser // for parse the body of the request and be able to write req.body.something
-mongoose install // for mongodb control
+mongoose // for mongodb control
