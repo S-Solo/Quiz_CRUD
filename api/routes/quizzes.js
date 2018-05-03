@@ -2,32 +2,30 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 
-const Quiz = require('../models/quiz') ;
+const Quiz = require('../models/quiz');
 
 //geting all quizzes
-router.get('/', (req, res, next) => {
-    Quiz.find()
-    .then(result => {
-        res.status(200).json(result);
-    })
-    .catch(err => {
-        res.status(500).json({
-            Error: err.message
+router.get('/', async (req, res, next) => {
+    try {
+        const result = await Quiz.find();
+        return await res.status(200).json(result);
+    } catch (error) {
+        return await res.status(500).json({
+            Error: error.message
         });
-    });
+    }
 });
 
 //getting quiz by id
-router.get('/:id', (req,res,next) => {
-    Quiz.findById(req.params.id)
-    .then(result => {
-        res.status(200).json(result);
-    })
-    .catch(err => {
-        res.status(500).json({
-            Error: err.message
+router.get('/:id', async (req, res, next) => {
+    try {
+        const result = await Quiz.findById(req.params.id);
+        return await res.status(200).json(result);
+    } catch (error) {
+        return await res.status(500).json({
+            Error: error.message
         });
-    })
+    }
 });
 
 /* Push a quiz to db
@@ -38,25 +36,26 @@ router.get('/:id', (req,res,next) => {
 	"answers" : ["true", "false", 5]
 }
 */
-router.post('/', (req, res, next) => {
-    const quiz = new Quiz ({
+router.post('/', async (req, res, next) => {
+
+    const quiz = await new Quiz({
         _id: new mongoose.Types.ObjectId(),
         title: req.body.title,
         content: req.body.content,
         answers: req.body.answers
     });
-    quiz.save()
-    .then(result => {
+
+    try {
+        const result = await quiz.save();
         console.log(result);
-        res.status(201).json({
+        return await res.status(201).json({
             message: "Handling post request from /quizzes",
             createdQuiz: quiz
         });
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({Error: err.message}) ;
-    });
+    } catch (error) {
+        console.log(error);
+        return await res.status(500).json({ Error: error.message });
+    }
 });
 
 // Update quiz : Sample (json)
@@ -67,39 +66,38 @@ hostname/quizzes/id
   {"propName": "title", "value": "Ruby"}
 ]
 */
-router.patch('/:id', (req, res, next) => {
-    const id = req.params.id;
-    const updateOps = {} ;
+router.patch('/:id', async (req, res, next) => {
+    const { id } = req.params;
+    const updateOps = {};
     for (const ops of req.body) {
         updateOps[ops.propName] = ops.value;
     }
-    Quiz.update({_id: id}, {$set : updateOps}).exec()
-    .then(result => {
-        res.status(200).json({
+
+    try {
+        const result = await Quiz.update({ _id: id }, { $set: updateOps }).exec();
+        return await res.status(200).json({
             updatedData: result
         });
-    })
-    .catch(err => {
-        res.status(500).json({
-            Error: err.message
+    } catch (error) {
+        return await res.status(500).json({
+            Error: error.message
         });
-    });
+    }
 });
 
 // deleting a quiz by id
-router.delete('/:id' , (req, res, next) => {
-    const id = req.params.id;
-    Quiz.remove({
-        _id: id
-    }).exec()
-    .then(result => {
-        res.status(200).json(result);
-    })
-    .catch(err => {
-        res.status(500).json({
-            Error: err.message
+router.delete('/:id', async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        const result = await Quiz.remove({
+            _id: id
+        }).exec();
+        return await res.status(200).json(result);
+    } catch (error) {
+        return await res.status(500).json({
+            Error: error.message
         });
-    });
+    }
 });
 
 
